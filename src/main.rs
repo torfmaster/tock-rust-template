@@ -1,14 +1,19 @@
-#![feature(alloc)]
 #![no_std]
+#![feature(asm)]
 
-extern crate alloc;
 extern crate tock;
 
-use alloc::fmt::Write;
+use tock::{led, timer};
 
-#[inline(never)]
 fn main() {
-    let mut console = tock::console::Console::new();
-    write!(&mut console, "Tock App\n").unwrap();
+    let led_count = led::count();
+    loop {
+        for i in 0..led_count {
+            led::toggle(i as u32);
+            for j in 0..1000000 {
+                unsafe { asm!("nop") }
+            }
+            //timer::delay_ms(500);
+        }
+    }
 }
-
